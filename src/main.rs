@@ -1,6 +1,9 @@
 #[allow(unused_imports)]
 #[macro_use]
 extern crate log;
+#[cfg(feature = "notify")]
+extern crate notify;
+#[allow(unused_imports)]
 #[macro_use]
 extern crate serde_json;
 

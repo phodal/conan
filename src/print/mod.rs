@@ -12,3 +12,4 @@ pub mod color;
 pub mod menu;
 pub mod tabs;
 pub mod text_edit_view;
+pub mod watcher;

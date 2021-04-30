@@ -15,13 +15,13 @@ piet-common = { version = "=0.4.1", features = ["png"] }
 log = "0.4.8"
 tracing-subscriber = "0.2.17"
 
-walkdir = "2"
-
 # mime type
 infer = "0.3"
 
 # unicode count size
 unicode-segmentation = "1.7.1"
+crossbeam-channel = "0.4.0"
+notify = { version = "5.0.0-pre.7"}
 
 regex = "1.0"
 
@@ -30,8 +30,3 @@ serde_json = "1.0"
 
 # save config
 dirs = "3.0"
-
-# todo: upgrade to 0.4.0
-pipe = "0.3"
-
-glib = "0.10"
