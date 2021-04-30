@@ -29,15 +29,6 @@ impl AppDelegate<AppState> for Delegate {
             return Handled::Yes;
         } else if let Some(info) = cmd.get(druid::commands::OPEN_FILE) {
             return Delegate::open_file(ctx, data, info);
-        } else if let Some(event) = cmd.get(print_command::XI_EVENT) {
-            data.handle_event(event, ctx);
-            return Handled::Yes;
-        }  else if let Some(event) = cmd.get(print_command::LIST_THEMES) {
-            data.update_themes_list(event, ctx);
-            return Handled::Yes;
-        }  else if let Some(theme) = cmd.get(print_command::SET_THEME) {
-            data.set_theme(theme);
-            return Handled::Yes;
         }
 
         Handled::No

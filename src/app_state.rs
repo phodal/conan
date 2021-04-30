@@ -20,37 +20,13 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, Clone, Data, Lens, Debug)]
 pub struct AppState {
     pub title: String,
-
     #[serde(skip_serializing, skip_deserializing)]
     pub workspace: Workspace,
-
-    #[data(ignore)]
-    #[serde(skip_serializing, skip_deserializing)]
-    pub theme: ThemeSettings,
-
-    pub theme_name: String,
-
-    #[data(ignore)]
-    #[serde(skip_serializing, skip_deserializing)]
-    pub styles: HashMap<usize, Style>,
-
-    #[data(ignore)]
-    #[serde(skip_serializing, skip_deserializing)]
-    pub themes: Vec<String>,
 
     pub params: Params,
 
     #[serde(skip_serializing, skip_deserializing)]
     pub entry: FileEntry,
-
-    #[serde(skip_serializing, skip_deserializing)]
-    pub core: Arc<Mutex<Client>>,
-    #[serde(skip_serializing, skip_deserializing)]
-    pub view: Arc<Mutex<ViewCore>>,
-
-    #[serde(default)]
-    #[serde(skip_serializing, skip_deserializing)]
-    pub view_id: usize,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub current_file: Option<Arc<Path>>,
@@ -94,18 +70,11 @@ impl Default for AppState {
         Self {
             title: "".to_string(),
             workspace: Default::default(),
-            theme: Default::default(),
-            theme_name: "".to_string(),
-            styles: Default::default(),
-            themes: vec![],
             params: Default::default(),
             entry: Default::default(),
-            core: Arc::new(Mutex::new(Default::default())),
-            view: Arc::new(Mutex::new(Default::default())),
             current_file: None,
             current_dir: None,
             last_dir: None,
-            view_id: 0,
         }
     }
 }
@@ -127,34 +96,8 @@ impl AppState {
         let buf = path.clone().unwrap().to_path_buf();
         self.workspace.current_file = Arc::new(buf.clone());
 
-        let file_path = buf.display().to_string();
-
-        self.req_new_view(file_path);
-
         self.current_file = path;
         self.save_global_config();
-    }
-
-    fn req_new_view(&self, filename: String) {
-        let view = self.view.clone();
-        let mut core = self.core.lock().unwrap();
-        core.new_view(filename.clone(), move |res| {
-            if let Ok(val) = res {
-                let id: Option<String> = serde_json::from_value(val).unwrap();
-                if let Some(view_id) = id {
-                    let mut state = view.lock().unwrap();
-
-                    state.focused = Some(view_id.clone());
-                    state.views.insert(
-                        view_id.clone(),
-                        ViewState {
-                            id: 0,
-                            filename: Option::from(filename),
-                        },
-                    );
-                }
-            }
-        });
     }
 
     pub fn reload_dir(&mut self) {
@@ -204,71 +147,6 @@ impl AppState {
         if let Some(path) = self.current_dir.clone() {
             &self.set_dir(path.to_path_buf());
         }
-    }
-}
-
-// for xipart
-impl AppState {
-    pub fn handle_event(&mut self, op: &RpcOperations, ctx: &mut DelegateCtx) {
-        let mut core = self.core.lock().unwrap();
-        let view = self.view.lock().unwrap();
-        match op {
-            RpcOperations::AvailableThemes(themes) => {
-                ctx.submit_command(print_command::LIST_THEMES.with(themes.clone()));
-            }
-            RpcOperations::AvailablePlugins(_plugins) => {}
-            RpcOperations::AvailableLanguages(_langs) => {
-                if let Some(view_id) = view.focused.as_ref() {
-                    core.send_notification(
-                        "set_language",
-                        &json!({ "view_id": view_id, "language_id": "JavaScript" }),
-                    );
-                } else {
-                    core.send_notification(
-                        "set_language",
-                        &json!({ "view_id": "view-id-1", "language_id": "JavaScript" }),
-                    );
-                }
-            }
-            RpcOperations::Update(update) => {
-                self.workspace.line_cache.update(update.clone());
-            }
-            RpcOperations::DefStyle(params) => {
-                self.styles.insert(params.id as usize, params.clone());
-            }
-            RpcOperations::ThemeChanged(param) => {
-                self.theme = param.theme.clone();
-                self.theme_name = param.name.clone();
-
-                let selection_style = Style {
-                    id: 0,
-                    fg_color: param.theme.selection_foreground.map(u32_from_color),
-                    bg_color: param.theme.selection.map(u32_from_color),
-                    weight: None,
-                    italic: None,
-                    underline: None,
-                };
-
-                // todo: update view;
-                self.styles.insert(0, selection_style);
-            }
-            RpcOperations::MeasureWidth((id, measure_width)) => {
-                info!("id: {:?}, width: {:?}", id, measure_width);
-            }
-            _ => {}
-        }
-    }
-
-    pub fn set_theme(&mut self, theme: &String) {
-        self.theme_name = theme.clone();
-        self.core
-            .lock()
-            .unwrap()
-            .send_notification("set_theme", &json!({ "theme_name": theme }));
-    }
-
-    pub fn update_themes_list(&mut self, themes: &AvailableThemes, _ctx: &mut DelegateCtx) {
-        self.themes = themes.themes.clone();
     }
 }
 

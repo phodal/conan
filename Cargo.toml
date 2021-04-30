@@ -1,5 +1,5 @@
 [package]
-name = "print"
+name = "conana"
 version = "0.1.0"
 authors = ["Phodal Huang <h@phodal.com>"]
 edition = "2018"
@@ -20,10 +20,6 @@ walkdir = "2"
 # mime type
 infer = "0.3"
 
-futures = "0.3"
-
-#druid-theme-loader = { version = "0.1.0", path = "druid-theme-loader", features = ["notify"] }
-
 # unicode count size
 unicode-segmentation = "1.7.1"
 
@@ -39,24 +35,3 @@ dirs = "3.0"
 pipe = "0.3"
 
 glib = "0.10"
-
-syntect = "3"
-
-# todo: move to crossbeam channel
-crossbeam-channel = ""
-
-[dependencies.xi-core-lib]
-branch = "master"
-git = "https://github.com/xi-editor/xi-editor"
-
-[dependencies.xi-rpc]
-branch = "master"
-git = "https://github.com/xi-editor/xi-editor"
-
-[dependencies.xi-trace]
-branch = "master"
-git = "https://github.com/xi-editor/xi-editor"
-features = ["chrome_trace_event"]
-
-[workspace]
-members = ["druid-theme-loader"]
