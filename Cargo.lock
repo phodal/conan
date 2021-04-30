@@ -238,6 +238,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "tracing",
  "tracing-subscriber",
  "unicode-segmentation",
 ]

@@ -1,4 +1,4 @@
-use druid::widget::{Flex, SizedBox, TextBox};
+use druid::widget::{Flex, SizedBox};
 use druid::{
     BoxConstraints, Color, Data, Env, Event, EventCtx, LayoutCtx, LifeCycle, LifeCycleCtx,
     LocalizedString, Menu, MenuItem, MouseEvent, PaintCtx, Size, UpdateCtx, Widget, WidgetExt,
@@ -6,6 +6,7 @@ use druid::{
 };
 
 use crate::app_state::{AppState, Workspace};
+use crate::print::custom_textbox::CustomTextBox;
 
 pub struct TextEditView {
     inner: Box<dyn Widget<AppState>>,
@@ -22,7 +23,7 @@ impl TextEditView {
         let mut flex = Flex::column();
 
         flex.add_flex_child(
-            TextBox::multiline()
+            CustomTextBox::multiline()
                 .with_text_color(Color::BLACK)
                 .expand_width()
                 .expand_height()
