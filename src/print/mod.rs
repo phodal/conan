@@ -13,6 +13,3 @@ pub mod menu;
 pub mod tabs;
 pub mod text_edit_view;
 pub mod watcher;
-pub mod input_component;
-pub mod custom_textbox;
-pub mod movement;

@@ -33,6 +33,7 @@ pub mod model;
 pub mod print;
 pub mod support;
 pub mod theme;
+pub mod conan_text;
 
 fn navigation_bar() -> impl Widget<AppState> {
     let label = Label::new(|workspace: &Workspace, _env: &Env| workspace.relative_path())

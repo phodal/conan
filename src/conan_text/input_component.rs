@@ -18,17 +18,17 @@ use std::cell::{Cell, Ref, RefCell, RefMut};
 use std::ops::Range;
 use std::sync::{Arc, Weak};
 
-use tracing::instrument;
-
+use druid::{Cursor, Env, Modifiers, Selector, text, TextAlignment, theme, UpdateCtx};
+use druid::kurbo::{Line, Point, Rect, Vec2};
+use druid::piet::TextLayout as _;
 use druid::text::{
     EditableText, ImeHandlerRef, ImeInvalidation, InputHandler, Movement, Selection, TextAction,
     TextLayout, TextStorage,
 };
-use druid::kurbo::{Line, Point, Rect, Vec2};
-use druid::piet::TextLayout as _;
 use druid::widget::prelude::*;
-use druid::{text, theme, Cursor, Env, Modifiers, Selector, TextAlignment, UpdateCtx};
-use crate::print;
+use tracing::instrument;
+
+use crate::{conan_text};
 
 /// A widget that accepts text input.
 ///
@@ -614,7 +614,7 @@ impl<T: TextStorage + EditableText> EditSession<T> {
             TextAction::SelectWord => {
                 if self.selection.is_caret() {
                     let range =
-                        print::movement::word_range_for_pos(buffer.as_str(), self.selection.active);
+                        conan_text::movement::word_range_for_pos(buffer.as_str(), self.selection.active);
                     self.external_selection_change = Some(Selection::new(range.start, range.end));
                 }
 
@@ -786,7 +786,7 @@ impl<T: TextStorage + EditableText> EditSession<T> {
         let lm = layout.line_metric(line_n).unwrap();
         let text = layout.line_text(line_n).unwrap();
         let rel_pos = pos - lm.start_offset;
-        let mut range = print::movement::word_range_for_pos(text, rel_pos);
+        let mut range = conan_text::movement::word_range_for_pos(text, rel_pos);
         range.start += lm.start_offset;
         range.end += lm.start_offset;
         range

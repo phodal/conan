@@ -6,7 +6,7 @@ use druid::{
 };
 
 use crate::app_state::{AppState, Workspace};
-use crate::print::custom_textbox::CustomTextBox;
+use crate::conan_text::custom_textbox::CustomTextBox;
 
 pub struct TextEditView {
     inner: Box<dyn Widget<AppState>>,
