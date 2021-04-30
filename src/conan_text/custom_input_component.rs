@@ -56,7 +56,7 @@ use crate::{conan_text};
 /// Sementically, this functions like a `RefCell`; attempting to borrow while
 /// a lock is held will result in a panic.
 #[derive(Debug, Clone)]
-pub struct TextComponent<T> {
+pub struct CustomTextComponent<T> {
     inner: Arc<RefCell<EditSession<T>>>,
     lock: Arc<Cell<ImeLock>>,
     // HACK: because of the way focus works (it is managed higher up, in
@@ -178,7 +178,7 @@ impl<T: TextStorage + EditableText> ImeHandlerRef for EditSessionRef<T> {
     }
 }
 
-impl TextComponent<()> {
+impl CustomTextComponent<()> {
     /// A notification sent by the component when the cursor has moved.
     ///
     /// If the payload is true, this follows an edit, and the view will need
@@ -212,7 +212,7 @@ impl TextComponent<()> {
     pub const BACKTAB: Selector = Selector::new("druid-builtin.textbox-backtab");
 }
 
-impl<T> TextComponent<T> {
+impl<T> CustomTextComponent<T> {
     /// Returns `true` if the inner [`EditSession`] can be read.
     pub fn can_read(&self) -> bool {
         self.lock.get() != ImeLock::ReadWrite
@@ -252,7 +252,7 @@ impl<T> TextComponent<T> {
     }
 }
 
-impl<T: EditableText + TextStorage> TextComponent<T> {
+impl<T: EditableText + TextStorage> CustomTextComponent<T> {
     /// Returns an [`ImeHandlerRef`] that can accept platform text input.
     ///
     /// The widget managing this component should call [`LifeCycleCtx::register_text_input`]
@@ -265,7 +265,7 @@ impl<T: EditableText + TextStorage> TextComponent<T> {
     }
 }
 
-impl<T: TextStorage + EditableText> Widget<T> for TextComponent<T> {
+impl<T: TextStorage + EditableText> Widget<T> for CustomTextComponent<T> {
     #[instrument(
         name = "InputComponent",
         level = "trace",
@@ -323,17 +323,17 @@ impl<T: TextStorage + EditableText> Widget<T> for TextComponent<T> {
                 let action = self.borrow_mut().take_external_action();
 
                 if let Some(scroll_to) = scroll_to {
-                    ctx.submit_notification(TextComponent::SCROLL_TO.with(scroll_to));
+                    ctx.submit_notification(CustomTextComponent::SCROLL_TO.with(scroll_to));
                 }
                 if let Some(action) = action {
                     match action {
-                        TextAction::Cancel => ctx.submit_notification(TextComponent::CANCEL),
+                        TextAction::Cancel => ctx.submit_notification(CustomTextComponent::CANCEL),
                         TextAction::InsertNewLine { .. } => {
-                            ctx.submit_notification(TextComponent::RETURN)
+                            ctx.submit_notification(CustomTextComponent::RETURN)
                         }
-                        TextAction::InsertTab { .. } => ctx.submit_notification(TextComponent::TAB),
+                        TextAction::InsertTab { .. } => ctx.submit_notification(CustomTextComponent::TAB),
                         TextAction::InsertBacktab => {
-                            ctx.submit_notification(TextComponent::BACKTAB)
+                            ctx.submit_notification(CustomTextComponent::BACKTAB)
                         }
                         _ => tracing::warn!("unexepcted external action '{:?}'", action),
                     };
@@ -910,7 +910,7 @@ impl<T: TextStorage + EditableText> InputHandler for EditSessionHandle<T> {
     }
 }
 
-impl<T> Default for TextComponent<T> {
+impl<T> Default for CustomTextComponent<T> {
     fn default() -> Self {
         let inner = EditSession {
             layout: TextLayout::new(),
@@ -931,7 +931,7 @@ impl<T> Default for TextComponent<T> {
             origin: Point::ZERO,
         };
 
-        TextComponent {
+        CustomTextComponent {
             inner: Arc::new(RefCell::new(inner)),
             lock: Arc::new(Cell::new(ImeLock::None)),
             has_focus: false,

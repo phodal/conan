@@ -20,7 +20,7 @@ use tracing::{instrument, trace};
 use druid::kurbo::Insets;
 use druid::piet::TextLayout as _;
 use druid::text::{
-    EditableText, ImeInvalidation, Selection, TextComponent, TextLayout, TextStorage,
+    EditableText, ImeInvalidation, Selection, TextLayout, TextStorage,
 };
 use druid::widget::prelude::*;
 use druid::widget::{Padding, Scroll, WidgetWrapper};
@@ -28,6 +28,7 @@ use druid::{
     theme, Color, Command, FontDescriptor, HotKey, KeyEvent, KeyOrValue, Point, Rect, SysMods,
     TextAlignment, TimerToken, Vec2,
 };
+use crate::conan_text::custom_input_component::CustomTextComponent;
 
 const CURSOR_BLINK_DURATION: Duration = Duration::from_millis(500);
 const MAC_OR_LINUX: bool = cfg!(any(target_os = "macos", target_os = "linux"));
@@ -48,7 +49,7 @@ const SCROLL_TO_INSETS: Insets = Insets::uniform_xy(40.0, 0.0);
 /// [`ValueTextBox`]: super::ValueTextBox
 pub struct CustomTextBox<T> {
     placeholder: TextLayout<String>,
-    inner: Scroll<T, Padding<T, TextComponent<T>>>,
+    inner: Scroll<T, Padding<T, CustomTextComponent<T>>>,
     scroll_to_selection_after_layout: bool,
     multiline: bool,
     /// true if a click event caused us to gain focus.
@@ -74,7 +75,7 @@ impl<T: EditableText + TextStorage> CustomTextBox<T> {
         placeholder.set_text_color(theme::PLACEHOLDER_COLOR);
         let mut scroll = Scroll::new(Padding::new(
             theme::TEXTBOX_INSETS,
-            TextComponent::default(),
+            CustomTextComponent::default(),
         ))
         .content_must_fill(true);
         scroll.set_enabled_scrollbars(druid::scroll_component::ScrollbarsEnabled::None);
@@ -276,19 +277,19 @@ impl<T> CustomTextBox<T> {
 }
 
 impl<T> CustomTextBox<T> {
-    /// An immutable reference to the inner [`TextComponent`].
+    /// An immutable reference to the inner [`CustomTextComponent`].
     ///
-    /// Using this correctly is difficult; please see the [`TextComponent`]
+    /// Using this correctly is difficult; please see the [`CustomTextComponent`]
     /// docs for more information.
-    pub fn text(&self) -> &TextComponent<T> {
+    pub fn text(&self) -> &CustomTextComponent<T> {
         self.inner.child().wrapped()
     }
 
-    /// A mutable reference to the inner [`TextComponent`].
+    /// A mutable reference to the inner [`CustomTextComponent`].
     ///
-    /// Using this correctly is difficult; please see the [`TextComponent`]
+    /// Using this correctly is difficult; please see the [`CustomTextComponent`]
     /// docs for more information.
-    pub fn text_mut(&mut self) -> &mut TextComponent<T> {
+    pub fn text_mut(&mut self) -> &mut CustomTextComponent<T> {
         self.inner.child_mut().wrapped_mut()
     }
 
@@ -365,8 +366,8 @@ impl<T: TextStorage + EditableText> Widget<T> for CustomTextBox<T> {
     fn event(&mut self, ctx: &mut EventCtx, event: &Event, data: &mut T, env: &Env) {
         match event {
             Event::Notification(cmd) => match cmd {
-                cmd if cmd.is(TextComponent::SCROLL_TO) => {
-                    let after_edit = *cmd.get(TextComponent::SCROLL_TO).unwrap_or(&false);
+                cmd if cmd.is(CustomTextComponent::SCROLL_TO) => {
+                    let after_edit = *cmd.get(CustomTextComponent::SCROLL_TO).unwrap_or(&false);
                     if after_edit {
                         ctx.request_layout();
                         self.scroll_to_selection_after_layout = true;
@@ -376,17 +377,17 @@ impl<T: TextStorage + EditableText> Widget<T> for CustomTextBox<T> {
                     ctx.set_handled();
                     ctx.request_paint();
                 }
-                cmd if cmd.is(TextComponent::TAB) && self.handles_tab_notifications => {
+                cmd if cmd.is(CustomTextComponent::TAB) && self.handles_tab_notifications => {
                     ctx.focus_next();
                     ctx.request_paint();
                     ctx.set_handled();
                 }
-                cmd if cmd.is(TextComponent::BACKTAB) && self.handles_tab_notifications => {
+                cmd if cmd.is(CustomTextComponent::BACKTAB) && self.handles_tab_notifications => {
                     ctx.focus_prev();
                     ctx.request_paint();
                     ctx.set_handled();
                 }
-                cmd if cmd.is(TextComponent::CANCEL) => {
+                cmd if cmd.is(CustomTextComponent::CANCEL) => {
                     ctx.resign_focus();
                     ctx.request_paint();
                     ctx.set_handled();
