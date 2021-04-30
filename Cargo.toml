@@ -1,5 +1,5 @@
 [package]
-name = "conan"
+name = "print"
 version = "0.1.0"
 authors = ["Phodal Huang <h@phodal.com>"]
 edition = "2018"
@@ -7,3 +7,56 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+druid = { git = "https://github.com/linebender/druid.git"}
+druid-shell = { git = "https://github.com/linebender/druid.git"}
+
+piet-common = { version = "=0.4.1", features = ["png"] }
+
+log = "0.4.8"
+tracing-subscriber = "0.2.17"
+
+walkdir = "2"
+
+# mime type
+infer = "0.3"
+
+futures = "0.3"
+
+#druid-theme-loader = { version = "0.1.0", path = "druid-theme-loader", features = ["notify"] }
+
+# unicode count size
+unicode-segmentation = "1.7.1"
+
+regex = "1.0"
+
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"
+
+# save config
+dirs = "3.0"
+
+# todo: upgrade to 0.4.0
+pipe = "0.3"
+
+glib = "0.10"
+
+syntect = "3"
+
+# todo: move to crossbeam channel
+crossbeam-channel = ""
+
+[dependencies.xi-core-lib]
+branch = "master"
+git = "https://github.com/xi-editor/xi-editor"
+
+[dependencies.xi-rpc]
+branch = "master"
+git = "https://github.com/xi-editor/xi-editor"
+
+[dependencies.xi-trace]
+branch = "master"
+git = "https://github.com/xi-editor/xi-editor"
+features = ["chrome_trace_event"]
+
+[workspace]
+members = ["druid-theme-loader"]

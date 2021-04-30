@@ -1,0 +1,18 @@
+BACKGROUND_COLOR:                   #eee
+TOOL_WINDOW_COLOR:                  #000
+
+SIDEBAR_BACKGROUND:                 #222
+SIDEBAR_EDGE_STROKE:                #333
+
+BUTTON_LIGHT:                       #e7e7e7
+BUTTON_DARK:                        #e7e7e7
+
+BASIC_TEXT_COLOR:                   #fff
+
+FOREGROUND_LIGHT:                   #000
+FOREGROUND_DARK:                    #fff
+
+BORDERED_WIDGET_HEIGHT:             32.0
+BUTTON_BORDER_WIDTH:                2.0
+
+BASIC_TEXT_SIZE:                    12.0

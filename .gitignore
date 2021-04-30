@@ -1,1 +1,5 @@
 /target
+.idea
+config
+config_dir
+log.log
