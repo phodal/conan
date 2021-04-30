@@ -4,24 +4,18 @@ extern crate log;
 #[macro_use]
 extern crate serde_json;
 
-use std::sync::{Arc, Mutex};
-use std::thread;
-
-use druid::{AppLauncher, Color, Target, UnitPoint, WindowDesc};
+use druid::{AppLauncher, Color, UnitPoint, WindowDesc};
 use druid::widget::{Flex, Label, WidgetExt};
 use druid::widget::prelude::*;
-use log::*;
 
 use app_state::AppState;
 use print::menu;
 use print::text_edit_view::TextEditView;
 pub use support::line;
 
-use crate::app_command::print_command;
 use crate::app_delegate::Delegate;
 use crate::app_state::Workspace;
 use crate::components::icon_button::IconButton;
-use crate::print::edit_view::EditView;
 use crate::print::ProjectToolWindow;
 use crate::support::directory;
 
@@ -34,7 +28,6 @@ pub mod components;
 pub mod file_manager;
 pub mod model;
 pub mod print;
-pub mod rpc;
 pub mod support;
 pub mod theme;
 
@@ -83,8 +76,6 @@ fn center() -> impl Widget<AppState> {
         .with_child(ProjectToolWindow::new())
         .with_default_spacer()
         .with_flex_child(TextEditView::new().center(), 1.0)
-        .with_default_spacer()
-        .with_flex_child(EditView::new().center(), 1.0)
         .padding(1.0)
         .expand_height()
         .expand_width()

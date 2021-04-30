@@ -2,19 +2,13 @@ use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 
-use druid::{Data, DelegateCtx, Lens};
+use druid::{Data, Lens};
 use serde::{Deserialize, Serialize};
 
-use crate::app_command::print_command;
-use crate::linecache::LineCache;
 use crate::model::file_tree::FileEntry;
-use crate::rpc::client::{Client, RpcOperations};
 use crate::support::directory;
-use crate::theme::u32_from_color;
-use crate::{AvailableThemes, Style, ThemeSettings};
-use log::*;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Clone, Data, Lens, Debug)]
@@ -157,9 +151,6 @@ pub struct Workspace {
     pub input_text: String,
     pub char_count: usize,
 
-    #[serde(skip_serializing, skip_deserializing)]
-    pub line_cache: LineCache,
-
     #[serde(default)]
     pub dir: Arc<PathBuf>,
 
@@ -192,7 +183,6 @@ impl Default for Workspace {
             origin_text: "".to_string(),
             input_text: "".to_string(),
             char_count: 0,
-            line_cache: Default::default(),
             dir: Default::default(),
             current_file: Default::default(),
         }

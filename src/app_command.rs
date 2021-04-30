@@ -1,7 +1,5 @@
 pub mod print_command {
     use crate::model::file_tree::FileEntry;
-    use crate::rpc::client::RpcOperations;
-    use crate::AvailableThemes;
     use druid::Selector;
 
     pub const REBUILD_MENUS: Selector = Selector::new("print.rebuild-menus");

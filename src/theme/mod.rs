@@ -45,29 +45,3 @@ pub fn configure_env(env: &mut Env) {
         .with_weight(FontWeight::LIGHT)
         .with_size(15.0));
 }
-
-pub fn from_xi_color(c: &syntect::highlighting::Color) -> druid::Color {
-    Color::rgba(
-        f64::from(c.r) / 255.0,
-        f64::from(c.g) / 255.0,
-        f64::from(c.b) / 255.0,
-        f64::from(c.a) / 255.0,
-    )
-}
-
-/// Implode an Color with its individual RGBA values into an u32
-pub fn u32_from_color(c: syntect::highlighting::Color) -> u32 {
-    (u32::from(c.a) << 24) | (u32::from(c.r) << 16) | (u32::from(c.g) << 8) | u32::from(c.b)
-}
-
-/// Explode an u32 into its individual RGBA values
-pub fn color_from_u32(c: u32) -> Color {
-    let color = syntect::highlighting::Color {
-        r: (c >> 16) as u8,
-        g: (c >> 8) as u8,
-        b: c as u8,
-        a: (c >> 24) as u8,
-    };
-
-    from_xi_color(&color)
-}
